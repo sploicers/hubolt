@@ -8,10 +8,8 @@ const ALOT_OF_URLS: string[] = [
 	"https://i.kym-cdn.com/photos/images/original/000/177/517/ALOT15.png"
 ];
 
-export default function alot(robot: Robot, slack: Slack) {
-	slack.message(new RegExp(/\b(alot)\b/gmi), async ({ context, say }) => {
-		if (robot.caresAbout(context.userId!)) {
-			await say(ALOT_OF_URLS[Math.floor(Math.random() * ALOT_OF_URLS.length)]);
-		}
+export default function alot(_: Robot, slack: Slack) {
+	slack.message(new RegExp(/\b(alot)\b/gmi), async ({ say }) => {
+		await say(ALOT_OF_URLS[Math.floor(Math.random() * ALOT_OF_URLS.length)]);
 	});
 }

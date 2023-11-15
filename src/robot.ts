@@ -1,6 +1,6 @@
-import { LogLevel, App as Slack} from "@slack/bolt";
+import { LogLevel, App as Slack } from "@slack/bolt";
 import { BotConfig } from "./config";
-import { readdir,  } from "fs/promises";
+import { readdir, } from "fs/promises";
 
 export class Robot {
 	private slack: Slack;
@@ -21,6 +21,12 @@ export class Robot {
 
 	public async boot(): Promise<void> {
 		await this.loadBrain();
+
+		this.slack.use(async ({ context, next }) => {
+			if (context.userId && this.caresAbout(context.userId)) {
+				next();
+			}
+		});
 		await this.slack.start();
 		await this.loadListeners();
 	}
@@ -39,11 +45,11 @@ export class Robot {
 
 	private async loadListeners() {
 		const directory = `${__dirname}/listeners`;
-		for (const file of  await readdir(directory)) {
+		for (const file of await readdir(directory)) {
 			const module = await import(`${directory}/${file}`.replace('.ts', ''));
 			module.default(this, this.slack);
 		}
 	}
 
-	private async loadBrain() {}
+	private async loadBrain() { }
 }
