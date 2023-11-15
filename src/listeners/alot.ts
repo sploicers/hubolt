@@ -1,4 +1,3 @@
-import { App as Slack } from "@slack/bolt";
 import { Robot } from "src/robot";
 
 const ALOT_OF_URLS: string[] = [
@@ -8,8 +7,8 @@ const ALOT_OF_URLS: string[] = [
 	"https://i.kym-cdn.com/photos/images/original/000/177/517/ALOT15.png"
 ];
 
-export default function alot(_: Robot, slack: Slack) {
-	slack.message(new RegExp(/\b(alot)\b/gmi), async ({ say }) => {
+export default function alot(robot: Robot) {
+	robot.hear(/\b(alot)\b/gmi, async ({ say, }) => {
 		await say(ALOT_OF_URLS[Math.floor(Math.random() * ALOT_OF_URLS.length)]);
 	});
 }
