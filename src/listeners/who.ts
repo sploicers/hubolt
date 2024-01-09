@@ -1,16 +1,13 @@
 import { Robot } from "src/robot";
 
 export default function who(robot: Robot) {
-	robot.hearMention(/[Ww]ho should (.+)\?$/, async ({ client, context, message, say }) => {
+	robot.hearMention(/who should (.+)\?$/i, async ({ matches, message, post }) => {
 		const randomChannelMember = async () => {
-			const channel = message.channel;
-			const apiResponse = await client.conversations.members({ channel });
-			const members = apiResponse.members ?? [];
+			const members = await robot.channelMembers(message.channel);
 			return members[Math.floor((Math.random() * members.length - 1))];
 		};
-
-		const thingToBeDone = context.matches[1];
+		const thingToBeDone = matches[1];
 		const designatedThingDoer = await randomChannelMember();
-		await say(`<@${designatedThingDoer}> should ${thingToBeDone}.`);
+		await post(`<@${designatedThingDoer}> should ${thingToBeDone}.`);
 	});
 }

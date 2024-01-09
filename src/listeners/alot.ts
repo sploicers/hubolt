@@ -8,7 +8,6 @@ const ALOT_OF_URLS: string[] = [
 ];
 
 export default function alot(robot: Robot) {
-	robot.hear(/\b(alot)\b/gmi, async ({ say, }) => {
-		await say(ALOT_OF_URLS[Math.floor(Math.random() * ALOT_OF_URLS.length)]);
-	});
+	robot.hear(/\b(alot)\b/i, ({ reply }) =>
+		reply(ALOT_OF_URLS[Math.floor(Math.random() * ALOT_OF_URLS.length)]));
 }
