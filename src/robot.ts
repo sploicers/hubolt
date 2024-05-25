@@ -1,42 +1,41 @@
 import { readdir, } from "fs/promises";
-import { CustomMessageHandler, SlackMessage } from "./slack/types";
-import { SlackAdapter } from "./slack/slackAdapter";
+import { IBotAdapter } from "./adapters/common/IBotAdapter";
+import { MessageHandler } from "./adapters/common/context";
+import { SlackMessage } from "./adapters/slack/types";
+import { SlackAdapter } from "./adapters/slack/slackAdapter";
 
-export class Robot {
-  constructor(private adapter: SlackAdapter) {}
+export class Robot<MessageType, Adapter extends IBotAdapter<MessageType>> {
+  constructor(private adapter: Adapter) {}
 
-  public async boot() {
-    this.adapter.initialize(async app => {
-      await app.start();
-    });
-    await this.loadBrain();
+  public async boot(): Promise<void> {
+    await this.adapter.initialize();
     await this.loadListeners();
   }
 
-  public hear(thing: RegExp | string, onThing: CustomMessageHandler) {
+  public hear(thing: RegExp | string, onThing: MessageHandler<MessageType>): void {
     this.adapter.onMessage(thing, onThing);
   }
 
-  public hearMention(thing: RegExp | string, onThing: CustomMessageHandler) {
+  public hearMention(thing: RegExp | string, onThing: MessageHandler<MessageType>): void {
     this.adapter.onAppMention(thing, onThing);
   }
 
-  public async react(message: SlackMessage, emoji: string) {
+  public async react(message: MessageType, emoji: string): Promise<void> {
     await this.adapter.reactToMessage(message, emoji);
   }
 
-  public async channelMembers(channel: string) {
-    return await this.adapter.listChannelMemberIds(channel);
+  public channelMembers(channel: string): Promise<string[]> {
+    return this.adapter.listChannelMemberIds(channel);
   }
 
-  private async loadListeners() {
+  private async loadListeners(): Promise<void> {
     const directory = `${__dirname}/listeners`;
-
     for (const file of await readdir(directory)) {
       const module = await import(`${directory}/${file}`.replace('.ts', ''));
       module.default(this);
     }
   }
-
-  private async loadBrain() {}
 }
+
+type SlackBot = Robot<SlackMessage, SlackAdapter>;
+export type GenericRobot = SlackBot;
