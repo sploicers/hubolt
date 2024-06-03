@@ -1,10 +1,10 @@
-import { Robot } from "src/robot";
+import { Robot, } from "src/robot";
 
 export default function numberwang(robot: Robot) {
-  robot.hear(/^\d+$/, async ({ message, }) => {
+  robot.hear(/^\d+$/, async ({ react, }) => {
     const isNumberWang = tenPercentChance();
     if (isNumberWang) {
-      await robot.react(message, 'numberwang');
+      await react('numberwang');
     }
   });
 }

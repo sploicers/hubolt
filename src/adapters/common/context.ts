@@ -7,10 +7,14 @@ export type Message = {
   timestamp: string,
 };
 
-export type BotContext = {
+type MessageActions = {
+  post: (text: string) => Promise<void>,
+  reply: (text: string) => Promise<void>,
+  react: (emoji: string) => Promise<void>,
+}
+
+export type BotContext = MessageActions & {
   message: Message,
   matches: string[],
   userId?: string,
-  post: (text: string) => Promise<void>,
-  reply: (text: string) => Promise<void>,
 };

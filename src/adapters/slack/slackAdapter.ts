@@ -21,11 +21,6 @@ export class SlackAdapter extends BotAdapter<SlackMessage> {
     return apiResponse.members ?? [];
   }
 
-  public async reactToMessage(message: Message, emoji: string): Promise<void> {
-    const { channelId: channel, timestamp, } = message;
-    await this.app.client.reactions.add({ channel, timestamp, name: emoji, });
-  }
-
   public async onMessage(regex: RegExp | string, handler: MessageHandler): Promise<void> {
     this.app.message(regex, args => handler(this.createContext(args)));
   }
@@ -55,15 +50,23 @@ export class SlackAdapter extends BotAdapter<SlackMessage> {
     const matches: string[] = context.matches ?? [];
     const userId = context.userId;
 
-    const post = async (text: string) => {
-      await say(text)
+    const actions = {
+      post: async (text: string) => {
+        await say(text)
+      },
+      reply: async (text: string) => {
+        await say({ text, thread_ts: message.ts, });
+      },
+      react: async (emoji: string) => {
+        const { channel, ts: timestamp } = message;
+        await this.app.client.reactions.add({ channel, timestamp, name: emoji, });
+      },
     };
-    const reply = async (text: string) => {
-      await say({ text, thread_ts: message.ts, });
-    };
-
     return {
-      message: this.normalizeMessage(message), matches, userId, post, reply,
+      message: this.normalizeMessage(message),
+      matches,
+      userId,
+      ...actions,
     };
   }
 }

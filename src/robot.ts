@@ -1,6 +1,6 @@
 import { readdir, } from "fs/promises";
-import { IBotAdapter } from "./adapters/common/adapter";
-import { Message, MessageHandler } from "./adapters/common/context";
+import { IBotAdapter, } from "./adapters/common/adapter";
+import { MessageHandler, } from "./adapters/common/context";
 
 export class Robot {
   constructor(private adapter: IBotAdapter) {}
@@ -16,10 +16,6 @@ export class Robot {
 
   public hearMention(thing: RegExp | string, onThing: MessageHandler): void {
     this.adapter.onAppMention(thing, onThing);
-  }
-
-  public async react(message: Message, emoji: string): Promise<void> {
-    await this.adapter.reactToMessage(message, emoji);
   }
 
   public channelMembers(channel: string): Promise<string[]> {
