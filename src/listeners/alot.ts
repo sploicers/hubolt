@@ -1,4 +1,4 @@
-import { GenericRobot } from "src/robot";
+import { Robot } from "src/robot";
 
 const ALOT_OF_URLS: string[] = [
   "https://3.bp.blogspot.com/_D_Z-D2tzi14/S8TffVGLElI/AAAAAAAACxA/trH1ch0Y3tI/s320/ALOT6.png",
@@ -7,7 +7,7 @@ const ALOT_OF_URLS: string[] = [
   "https://i.kym-cdn.com/photos/images/original/000/177/517/ALOT15.png"
 ];
 
-export default function alot(robot: GenericRobot) {
+export default function alot(robot: Robot) {
   robot.hear(/\b(alot)\b/i, ({ reply }) =>
     reply(ALOT_OF_URLS[Math.floor(Math.random() * ALOT_OF_URLS.length)]));
 }

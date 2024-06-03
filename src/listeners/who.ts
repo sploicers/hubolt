@@ -1,9 +1,9 @@
-import { GenericRobot } from "src/robot";
+import { Robot } from "src/robot";
 
-export default function who(robot: GenericRobot) {
+export default function who(robot: Robot) {
   robot.hearMention(/who should (.+)\?$/i, async ({ matches, message, post }) => {
     const randomChannelMember = async () => {
-      const members = await robot.channelMembers(message.channel);
+      const members = await robot.channelMembers(message.channelId);
       return members[Math.floor((Math.random() * members.length - 1))];
     };
     const thingToBeDone = matches[1];

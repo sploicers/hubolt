@@ -1,6 +1,6 @@
-import { GenericRobot } from "src/robot";
+import { Robot } from "src/robot";
 
-export default function numberwang(robot: GenericRobot) {
+export default function numberwang(robot: Robot) {
   robot.hear(/^\d+$/, async ({ message, }) => {
     const isNumberWang = tenPercentChance();
     if (isNumberWang) {

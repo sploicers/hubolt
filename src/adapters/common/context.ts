@@ -1,9 +1,16 @@
-export type MessageHandler<MessageType> = (context: BotContext<MessageType>) => Promise<void>;
+export type MessageHandler = (context: BotContext) => Promise<void>;
 
-export type BotContext<MessageType> = {
-  message: MessageType,
+export type Message = {
+  userId: string,
+  channelId: string,
+  text: string,
+  timestamp: string,
+};
+
+export type BotContext = {
+  message: Message,
   matches: string[],
   userId?: string,
   post: (text: string) => Promise<void>,
   reply: (text: string) => Promise<void>,
-}
+};
