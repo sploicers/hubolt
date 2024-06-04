@@ -2,7 +2,9 @@ import { App, AppOptions, directMention, } from '@slack/bolt';
 import { SlackMessage, SlackMiddlewareArgs, } from './types';
 import { BotAdapter, } from '../common/adapter';
 import { BotContext, Message, MessageHandler, } from '../common/context';
+import { genericMessageEventsOnly, } from './middleware';
 import assert from 'assert';
+
 
 export class SlackAdapter extends BotAdapter<SlackMessage> {
   private app: App;
@@ -22,7 +24,7 @@ export class SlackAdapter extends BotAdapter<SlackMessage> {
   }
 
   public async onMessage(regex: RegExp | string, handler: MessageHandler): Promise<void> {
-    this.app.message(regex, args => handler(this.createContext(args)));
+    this.app.message(genericMessageEventsOnly(), regex, args => handler(this.createContext(args)));
   }
 
   public async onAppMention(regex: RegExp | string, handler: MessageHandler): Promise<void> {
@@ -30,16 +32,10 @@ export class SlackAdapter extends BotAdapter<SlackMessage> {
   }
 
   protected normalizeMessage(message: SlackMessage): Message {
-    // TODO - seems like we need to tell the type system that this is a GenericMessageEvent,
-    // otherwise fields like userId, text, and many more are not accessible. There must be a
-    // cleaner way of achieving this.
-    assert(
-      message.subtype === undefined,
-      'Bot received a Slack message event with the subtype set - this should never happen.'
-    );
+    assert(message.subtype === undefined || message.subtype === 'bot_message');
     return {
       channelId: message.channel,
-      userId: message.user,
+      userId: message.subtype === undefined ? message.user : message.user ?? message.bot_id,
       text: message.text ?? '',
       timestamp: message.ts,
     };
