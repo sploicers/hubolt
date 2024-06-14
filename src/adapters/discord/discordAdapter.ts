@@ -15,15 +15,6 @@ export class DiscordAdapter extends BotAdapter<DiscordMessage> {
     await this.client.login(this.options.token);
   }
 
-  public normalizeMessage(message: DiscordMessage): Message {
-    return {
-      userId: message.author.id,
-      channelId: message.channelId,
-      text: message.content,
-      timestamp: message.createdTimestamp.toString(),
-    };
-  }
-
   public async listChannelMemberIds(channelId: string): Promise<string[]> {
     const channel = this.client.channels.cache.find(c => c.id === channelId);
     if (channel !== undefined) {
@@ -38,7 +29,7 @@ export class DiscordAdapter extends BotAdapter<DiscordMessage> {
   public async onMessage(regex: string | RegExp, handler: MessageHandler): Promise<void> {
     this.ifMessageMatches(
       regex,
-      message => handler(this.createMessageContext(regex, message))
+      message => handler(this.createMessageContext(regex, message)),
     );
   }
 
@@ -46,6 +37,15 @@ export class DiscordAdapter extends BotAdapter<DiscordMessage> {
     this.ifMessageMentionsBot(
       message => handler(this.createMessageContext(regex, message)),
     );
+  }
+
+  protected normalizeMessage(message: DiscordMessage): Message {
+    return {
+      userId: message.author.id,
+      channelId: message.channelId,
+      text: message.content,
+      timestamp: message.createdTimestamp.toString(),
+    };
   }
 
   private ifMessageMatches(regex: string | RegExp, action: (message: DiscordMessage) => void) {

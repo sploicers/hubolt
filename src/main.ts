@@ -1,18 +1,22 @@
 import config from './config';
 import { Robot } from './robot';
-import { SlackAdapter } from './adapters/slack/slackAdapter';
+import { DiscordAdapter } from './adapters/discord/discordAdapter';
+import { GatewayIntentBits } from 'discord.js';
 
 async function main() {
-  const adapter = new SlackAdapter({
-    token: config.slackBotUserOAuthToken,
-    botUserId: config.slackBotUserId,
-    clientId: config.slackClientId,
-    clientSecret: config.slackClientSecret,
-    socketMode: true,
-    ignoreSelf: true,
-    appToken: config.slackAppToken,
-  });
+  const adapter = new DiscordAdapter({
+    intents: [
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMembers,
+      GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.MessageContent,
+    ],
+    token: config.discordToken,
+  })
   await new Robot(adapter).boot();
 }
 
-main();
+main().catch(err => {
+  console.error(err);
+  process.exit(1);
+});

@@ -32,6 +32,9 @@ export class BotConfig {
   public get slackUserOAuthToken() {
     return this.getConfigValue('SLACK_USER_OAUTH_TOKEN');
   }
+  public get discordToken() {
+    return this.getConfigValue('DISCORD_TOKEN');
+  }
 
   private getConfigValue(key: keyof ServiceConfiguration): string {
     const value = this.config[key] ?? this.defaults[key];
