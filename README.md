@@ -14,8 +14,11 @@ It is planned to add persistent storage support in the near future, and move tow
 * [Create an app integration with your Slack workspace](https://api.slack.com/apps) and fill in the values as appropriate.
 
 #### Building/running
-* `yarn build`, or
+##### Directly:
 * `yarn start` (will also run a build)
+##### Via Docker:
+* `docker build . -t hubolt`
+* `docker run --rm --env-file .env -it hubolt`
 
 #### Adding a new listener
 
